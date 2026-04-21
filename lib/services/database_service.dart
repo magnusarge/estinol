@@ -8,28 +8,35 @@ import '../utils.dart';
 class DatabaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+  // Väljastab teate, kui andmebaasiühendus tehakse
+  void _logFirestoreCall(String action) {
+    final now = DateTime.now();
+    // Vormindame ilusa kellaaja: HH:MM:SS.mmm
+    final timeString = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}.${now.millisecond.toString().padLeft(3, '0')}";
+    // Tulemus on hästi märgatav konsoolis
+    print('🔥 [FIRESTORE PÄRING] $timeString -> $action');
+  }
+
   /// 1. SÜNKRONISEERIMINE: Tõmbab pilvest ainult uuenenud andmed
   Future<void> syncDictionary(String lang) async {
     final prefs = await SharedPreferences.getInstance();
     
     try {
-      // Pärime jälgimisdokumendi, kus on kirjas kõigi failide viimased muutmise ajad
+      // LOGIME: Jälgimisdokumendi pärimine
+      _logFirestoreCall("Loen 'changes' dokumenti");
       DocumentSnapshot changesDoc = await _db.collection('data').doc('changes').get();
       
       if (!changesDoc.exists) return;
       
       Map<String, dynamic> remoteTimestamps = changesDoc.data() as Map<String, dynamic>;
 
-      // Käime läbi kõik tähed/võtmed (nt "es_a", "es_b" jne)
       for (String key in remoteTimestamps.keys) {
-        // Kontrollime, kas see võti kuulub praegusele keelele (nt algab "es_")
         if (key.startsWith('${lang}_')) {
-          String letter = key.split('_')[1]; // Eraldame tähe, nt "a"
+          String letter = key.split('_')[1]; 
           
           int remoteTime = remoteTimestamps[key] ?? 0;
           int localTime = prefs.getInt('sync_time_${lang}_$letter') ?? 0;
 
-          // Kui serveris on uuem aeg, laeme selle tähe dokumendi alla!
           if (remoteTime > localTime) {
             await _downloadAndCacheLetter(lang, letter, remoteTime, prefs);
           }
@@ -42,6 +49,7 @@ class DatabaseService {
 
   /// Abifunktsioon ühe tähe dokumendi allalaadimiseks ja lokaalselt salvestamiseks
   Future<void> _downloadAndCacheLetter(String lang, String letter, int newTime, SharedPreferences prefs) async {
+    _logFirestoreCall("Laen alla uued sõnad: sõnastik $lang, täht $letter");
     DocumentSnapshot doc = await _db.collection('words_$lang').doc(letter).get();
     
     if (doc.exists && doc.data() != null) {
