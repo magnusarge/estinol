@@ -85,7 +85,7 @@ class _MainScreenState extends State<MainScreen> {
           // Nüüd anname _activeLang ilusti edasi ja punased jooned kaovad
           HomeScreen(activeLang: _activeLang),
           DictionaryScreen(activeLang: _activeLang),
-          const FlashcardsScreen(), // Kuna siin pole parameetreid, siis const sobib
+          FlashcardsScreen(activeLang: _activeLang),
           const SettingsScreen(),
         ],
       ),

@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 import '../models/word.dart';
+import 'flashcard_session_screen.dart'; // UUS EKRAAN, MILLE KOHE LOOME!
 
 class FlashcardsScreen extends StatefulWidget {
-  const FlashcardsScreen({super.key});
+  final String activeLang; // LISA SEE
+
+  const FlashcardsScreen({super.key, required this.activeLang});
 
   @override
   State<FlashcardsScreen> createState() => _FlashcardsScreenState();
 }
 
 class _FlashcardsScreenState extends State<FlashcardsScreen> {
-  // Vaikimisi valikud
-  Set<int> _selectedDifficulties = {0, 1, 2, 3}; // Kõik on alguses valitud
+  Set<int> _selectedDifficulties = {0, 1, 2, 3}; 
   int _selectedCount = 15;
 
   final List<int> _countOptions = [10, 15, 25, 40];
 
-  // Abistav sõnastik raskusastmete nimede kuvamiseks
   final Map<int, String> _difficultyNames = {
     0: 'Määramata',
     1: 'Kerge',
@@ -25,7 +26,6 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
   };
 
   void _startLearning() async {
-    // Kaitseme kasutajat selle eest, et ta ei vajutaks starti ilma ühtegi raskusastet valimata
     if (_selectedDifficulties.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Vali vähemalt üks raskusaste!')),
@@ -33,11 +33,38 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
       return;
     }
 
-    print('Valitud kaarte: $_selectedCount, Raskusastmed: $_selectedDifficulties');
-    
-    // Siia lisame hiljem päringu ja ekraanivahetuse:
-    // List<Word> words = await DatabaseService().getFlashcardsBatch('es', _selectedDifficulties, _selectedCount);
-    // Navigator.push(...)
+    // Kuvame laadimise indikaatorit, kuni otsime andmebaasist sobivaid sõnu
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    // Kasutame nüüd uut andmebaasi funktsiooni ja aktiivset keelt
+    List<Word> words = await DatabaseService().getFlashcardsBatch(
+      widget.activeLang, 
+      _selectedDifficulties, 
+      _selectedCount,
+    );
+
+    if (!mounted) return;
+    Navigator.pop(context); // Sulgeme laadimisakna
+
+    // Kui valitud kriteeriumitega sõnu ei leitud (või baas on tühi)
+    if (words.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selliseid sõnu ei leitud! Proovi muid seadeid.')),
+      );
+      return;
+    }
+
+    // Lähme mängima!
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FlashcardSessionScreen(words: words),
+      ),
+    );
   }
 
   @override
