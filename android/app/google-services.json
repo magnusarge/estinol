@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "577733338609",
+    "project_id": "estinol2",
+    "storage_bucket": "estinol2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577733338609:android:0ffd494abd0c99de709050",
+        "android_client_info": {
+          "package_name": "com.example.estinol"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBr1xv8f3rGIEzA-jaLbuCK9coXGdnmAJM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
