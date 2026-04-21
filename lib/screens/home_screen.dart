@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   
   List<Word> _searchResults = [];
   bool _isLoading = false;
-  Word? _randomWord; // UUS: Hoiab meie juhuslikku sõna
+  Word? _randomWord;
 
   @override
   void initState() {
@@ -27,23 +27,40 @@ class _HomeScreenState extends State<HomeScreen> {
     _initialSync();
   }
 
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Kui keele suund muutub nupust
+    if (oldWidget.activeLang != widget.activeLang) {
+      setState(() {
+        _randomWord = null; // Teeme vana keele sõnast ekraani puhtaks
+        _searchController.clear();
+        _searchResults = [];
+      });
+      _initialSync(); // Laeme andmed uues keeles
+    }
+  }
+
   void _initialSync() async {
-    await _dbService.syncDictionary('es');
+    setState(() => _isLoading = true);
+    
+    // KASUTAME DÜNAAMILIST KEELT, MITTE 'es'
+    await _dbService.syncDictionary(widget.activeLang);
     
     if (_searchController.text.isNotEmpty) {
       _onSearchChanged(_searchController.text);
     } else {
-      // Kui otsing on tühi, laeme juhusliku sõna!
       _loadRandomWord();
     }
   }
 
-  // UUS FUNKTSIOON: Laeb baasist juhusliku sõna
   void _loadRandomWord() async {
-    Word? word = await _dbService.getRandomWord('es');
+    // OTSIME SUVALIST SÕNA ÕIGES KEELES
+    Word? word = await _dbService.getRandomWord(widget.activeLang);
     if (mounted) {
       setState(() {
         _randomWord = word;
+        _isLoading = false;
       });
     }
   }
@@ -56,11 +73,10 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
-    List<Word> results = await _dbService.searchWordsLocally('es', query);
+    // OTSIME SÕNU ÕIGES KEELES
+    List<Word> results = await _dbService.searchWordsLocally(widget.activeLang, query);
 
     setState(() {
       _searchResults = results;
@@ -72,16 +88,15 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _searchController.clear();
       _searchResults = [];
-      _loadRandomWord(); // Laeme uue juhusliku sõna, kui ristist kinni pannakse!
+      _loadRandomWord();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // behavior on oluline, et tuvastaks vajutuse ka tühjal alal (näiteks ridade vahel)
       behavior: HitTestBehavior.opaque, 
-      onTap: () => FocusScope.of(context).unfocus(), // Peidab klaviatuuri
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -91,7 +106,10 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: _searchController,
               onChanged: _onSearchChanged,
               decoration: InputDecoration(
-                hintText: 'Otsi hispaania keeles...',
+                // Dünaamiline vihjetekst otsingukastis
+                hintText: widget.activeLang == 'es' 
+                    ? 'Otsi hispaania keeles...' 
+                    : 'Otsi eesti keeles...',
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -127,10 +145,18 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    // Kui otsing on tühi, näitame juhuslikku sõna ja reload nuppu
     if (_searchController.text.trim().length < 2) {
        if (_randomWord == null) {
-         return const SizedBox(); 
+         // Lisame sõnumi juhuks, kui vahetad 'et' keele peale, aga andmebaas on veel tühi
+         return Center(
+           child: Text(
+             widget.activeLang == 'es' 
+                ? 'Sõnu ei leitud. Veendu ühenduses.' 
+                : 'Eesti keele sõnu pole veel andmebaasi lisatud.',
+             textAlign: TextAlign.center,
+             style: const TextStyle(color: Colors.grey),
+           ),
+         ); 
        }
        
        return ListView(
@@ -148,10 +174,9 @@ class _HomeScreenState extends State<HomeScreen> {
                      color: Colors.blueGrey.shade400
                    ),
                  ),
-                 // RELOAD NUPP
                  IconButton(
                    icon: const Icon(Icons.refresh_rounded, color: Colors.blue),
-                   onPressed: _loadRandomWord, // Kutsub uuesti juhusliku sõna laadimist
+                   onPressed: _loadRandomWord, 
                    tooltip: 'Laadi uus sõna',
                  ),
                ],

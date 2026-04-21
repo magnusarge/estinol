@@ -33,6 +33,15 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
     _loadDictionary();
   }
 
+  @override
+  void didUpdateWidget(covariant DictionaryScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Kui keele suund muutus, käsime nimekirja uuesti laadida
+    if (oldWidget.activeLang != widget.activeLang) {
+      _loadDictionary();
+    }
+  }
+
   Future<void> _loadDictionary() async {
     setState(() => _isLoading = true);
     
