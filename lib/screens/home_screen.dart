@@ -75,32 +75,37 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            controller: _searchController,
-            onChanged: _onSearchChanged,
-            decoration: InputDecoration(
-              hintText: 'Otsi hispaania keeles...',
-              prefixIcon: const Icon(Icons.search, color: Colors.grey),
-              suffixIcon: _searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear, color: Colors.grey),
-                      onPressed: _clearSearch,
-                    )
-                  : null,
+    return GestureDetector(
+      // behavior on oluline, et tuvastaks vajutuse ka tühjal alal (näiteks ridade vahel)
+      behavior: HitTestBehavior.opaque, 
+      onTap: () => FocusScope.of(context).unfocus(), // Peidab klaviatuuri
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _searchController,
+              onChanged: _onSearchChanged,
+              decoration: InputDecoration(
+                hintText: 'Otsi hispaania keeles...',
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, color: Colors.grey),
+                        onPressed: _clearSearch,
+                      )
+                    : null,
+              ),
             ),
-          ),
-          
-          const SizedBox(height: 20),
-          
-          Expanded(
-            child: _buildResultsArea(),
-          )
-        ],
+            
+            const SizedBox(height: 20),
+            
+            Expanded(
+              child: _buildResultsArea(),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -119,24 +124,34 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    // UUS LOOGIKA: Kui otsing on tühi, näitame juhuslikku sõna
+    // Kui otsing on tühi, näitame juhuslikku sõna ja reload nuppu
     if (_searchController.text.trim().length < 2) {
        if (_randomWord == null) {
-         // Kui baas on alles laadimisel või täiesti tühi
          return const SizedBox(); 
        }
        
        return ListView(
          children: [
            Padding(
-             padding: const EdgeInsets.only(bottom: 16.0, left: 4.0),
-             child: Text(
-               '✨ Avasta uus sõna',
-               style: TextStyle(
-                 fontSize: 18, 
-                 fontWeight: FontWeight.bold, 
-                 color: Colors.blueGrey.shade400
-               ),
+             padding: const EdgeInsets.only(bottom: 8.0, left: 4.0),
+             child: Row(
+               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+               children: [
+                 Text(
+                   '✨ Avasta uus sõna',
+                   style: TextStyle(
+                     fontSize: 18, 
+                     fontWeight: FontWeight.bold, 
+                     color: Colors.blueGrey.shade400
+                   ),
+                 ),
+                 // RELOAD NUPP
+                 IconButton(
+                   icon: const Icon(Icons.refresh_rounded, color: Colors.blue),
+                   onPressed: _loadRandomWord, // Kutsub uuesti juhusliku sõna laadimist
+                   tooltip: 'Laadi uus sõna',
+                 ),
+               ],
              ),
            ),
            WordCard(word: _randomWord!),

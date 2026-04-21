@@ -50,36 +50,33 @@ class WordCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Text(
-                    word.algvorm,
-                    style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.copy, color: Colors.grey),
-                    tooltip: "Kopeeri sõna",
-                    onPressed: () => _copyWord(context),
-                  ),
-                ],
-              ),
-              // Hiljem saame siia lisada admini muutmise/kustutamise nupud
-              if (isAdmin)
-                Row(
-                  children: [
-                    IconButton(icon: const Icon(Icons.edit, color: Colors.blue), onPressed: () {}),
-                    IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () {}),
-                  ],
+              // Tekst võtab maksimaalse vaba ruumi
+              Expanded(
+                child: Text(
+                  word.algvorm,
+                  style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                 ),
+              ),
+              // Kopeerimise nupp kohe paremas ääres, samas stiilis nagu listis
+              IconButton(
+                icon: const Icon(Icons.copy_rounded, size: 20, color: Colors.blue),
+                tooltip: "Kopeeri sõna",
+                onPressed: () => _copyWord(context),
+              ),
+              // Admini nupud joonduvad samuti paremale
+              if (isAdmin) ...[
+                IconButton(icon: const Icon(Icons.edit, color: Colors.blue), onPressed: () {}),
+                IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () {}),
+              ],
             ],
           ),
           const Divider(),
           const SizedBox(height: 10),
-          // Markdowni joonistamine (nõuab flutter_markdown paketti)
+          // Markdown tehakse valitavaks
           MarkdownBody(
-            data: word.sisuMd,
+            data: word.sisuMd.isEmpty ? "Sisu puudub." : word.sisuMd,
+            selectable: true, 
             styleSheet: MarkdownStyleSheet(
               p: const TextStyle(fontSize: 16, height: 1.5),
             ),
