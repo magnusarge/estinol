@@ -45,10 +45,13 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
   Future<void> _loadDictionary() async {
     setState(() => _isLoading = true);
     
+    // 1. KONTROLLIME UUENDUSI KA SIIN (et vältida võidujooksu)
+    await _dbService.syncDictionary(widget.activeLang);
+    
+    // 2. LAEME ANDMED (nüüd on kindel, et need on värsked)
     List<Word> loadedWords = await _dbService.getAllCachedWords(widget.activeLang);
     Set<String> letters = {};
     
-    // Kaardistame olemasolevad esitähed
     for (var word in loadedWords) {
       if (word.algvorm.isNotEmpty) {
         letters.add(word.algvorm[0].toLowerCase());

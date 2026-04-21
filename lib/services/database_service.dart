@@ -6,23 +6,47 @@ import '../models/word.dart';
 import '../utils.dart';
 
 class DatabaseService {
+  // --- UUS: SINGLETONI LOOGIKA ---
+  static final DatabaseService _instance = DatabaseService._internal();
+
+  factory DatabaseService() {
+    return _instance;
+  }
+
+  DatabaseService._internal(); // Privaatne konstruktor
+  // --------------------------------
+
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // Väljastab teate, kui andmebaasiühendus tehakse
+  // Kuna kõik ekraanid jagavad nüüd ühtteist DatabaseService'i,
+  // jagavad nad edukalt ka seda sama muutujat!
+  Future<void>? _activeSyncFuture;
+
   void _logFirestoreCall(String action) {
     final now = DateTime.now();
-    // Vormindame ilusa kellaaja: HH:MM:SS.mmm
     final timeString = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}.${now.millisecond.toString().padLeft(3, '0')}";
-    // Tulemus on hästi märgatav konsoolis
     print('🔥 [FIRESTORE PÄRING] $timeString -> $action');
   }
 
-  /// 1. SÜNKRONISEERIMINE: Tõmbab pilvest ainult uuenenud andmed
-  Future<void> syncDictionary(String lang) async {
+  /// VÄLISPOOLT VÄLJAKUTSUTAV FUNKTSIOON
+  Future<void> syncDictionary(String lang) {
+    if (_activeSyncFuture != null) {
+      print('⏳ Sünkroniseerimine juba käib, jagan olemasolevat päringut.');
+      return _activeSyncFuture!;
+    }
+
+    _activeSyncFuture = _performSync(lang).whenComplete(() {
+      _activeSyncFuture = null;
+    });
+
+    return _activeSyncFuture!;
+  }
+
+  /// SIIN TOIMUB REAALNE ANDMEBAASIGA SUHTLEMINE
+  Future<void> _performSync(String lang) async {
     final prefs = await SharedPreferences.getInstance();
     
     try {
-      // LOGIME: Jälgimisdokumendi pärimine
       _logFirestoreCall("Loen 'changes' dokumenti");
       DocumentSnapshot changesDoc = await _db.collection('data').doc('changes').get();
       
