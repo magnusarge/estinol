@@ -43,12 +43,8 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   bool _isSpanishToEstonian = true;
 
-  static const List<Widget> _pages = <Widget>[
-    HomeScreen(),
-    DictionaryScreen(),
-    FlashcardsScreen(),
-    SettingsScreen(),
-  ];
+  // See getter arvutab alati õige keele stringi
+  String get _activeLang => _isSpanishToEstonian ? 'es' : 'et';
 
   void _onItemTapped(int index) {
     setState(() {
@@ -56,7 +52,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void _toggleDirection() {
+  void _toggleLanguage() {
     setState(() {
       _isSpanishToEstonian = !_isSpanishToEstonian;
     });
@@ -66,37 +62,33 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppTheme.bgColor,
-        title: const Text(
-          'Estiñol',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-        ),
+        title: const Text('Estiñol', style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: ActionChip(
-              backgroundColor: _isSpanishToEstonian 
-                  ? Colors.blue.shade50 
-                  : Colors.orange.shade50,
-              label: Text(
-                _isSpanishToEstonian ? 'ES ➔ ET' : 'ET ➔ ES',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: _isSpanishToEstonian 
-                      ? AppTheme.primaryColor 
-                      : AppTheme.secondaryColor,
-                ),
-              ),
-              onPressed: _toggleDirection,
-              side: BorderSide.none,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+          TextButton.icon(
+            onPressed: _toggleLanguage,
+            icon: Icon(Icons.swap_horiz, color: Theme.of(context).primaryColor),
+            label: Text(
+              _isSpanishToEstonian ? 'ES ➔ ET' : 'ET ➔ ES',
+              style: TextStyle(
+                fontWeight: FontWeight.bold, 
+                color: Theme.of(context).primaryColor,
               ),
             ),
-          )
+          ),
+          const SizedBox(width: 10),
         ],
       ),
-      body: _pages[_selectedIndex],
+      // KUSTUTA VANA _pages JA KASUTA SEDA:
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          // Nüüd anname _activeLang ilusti edasi ja punased jooned kaovad
+          HomeScreen(activeLang: _activeLang),
+          DictionaryScreen(activeLang: _activeLang),
+          const FlashcardsScreen(), // Kuna siin pole parameetreid, siis const sobib
+          const SettingsScreen(),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: _onItemTapped,

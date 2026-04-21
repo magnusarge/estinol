@@ -4,7 +4,10 @@ import '../models/word.dart';
 import '../widgets/word_card.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String activeLang; // 1. Defineerime muutuja
+
+  // 2. Nõuame seda konstruktoris (required this.activeLang)
+  const HomeScreen({super.key, required this.activeLang}); 
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

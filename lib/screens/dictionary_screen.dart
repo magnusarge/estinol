@@ -6,10 +6,10 @@ import '../models/word.dart';
 import '../services/database_service.dart';
 
 class DictionaryScreen extends StatefulWidget {
-  // Esialgu võtame suuna parameetrina, tulevikus saad seda globaalselt manageerida (nt Provider/Riverpod)
-  final String activeLang; 
+  final String activeLang; // 1. Defineerime muutuja
 
-  const DictionaryScreen({super.key, this.activeLang = 'es'});
+  // 2. Nõuame seda konstruktoris
+  const DictionaryScreen({super.key, required this.activeLang});
 
   @override
   State<DictionaryScreen> createState() => _DictionaryScreenState();
