@@ -112,4 +112,29 @@ class DatabaseService {
     
     return Word.fromMap(randomWordId, wordsMap[randomWordId]);
   }
+
+  /// 4. KÕIKIDE SÕNADE LAADIMINE (Nimekirja jaoks)
+  Future<List<Word>> getAllCachedWords(String lang) async {
+    final prefs = await SharedPreferences.getInstance();
+    
+    // Leiame kõik antud keele failid
+    final keys = prefs.getKeys().where((k) => k.startsWith('cache_${lang}_')).toList();
+    
+    List<Word> allWords = [];
+
+    for (String key in keys) {
+      String? cachedData = prefs.getString(key);
+      if (cachedData != null) {
+        Map<String, dynamic> wordsMap = jsonDecode(cachedData);
+        wordsMap.forEach((wordId, wordData) {
+          allWords.add(Word.fromMap(wordId, wordData));
+        });
+      }
+    }
+
+    // Sorteerime tulemused algvormi järgi tähestiku järjekorda
+    allWords.sort((a, b) => a.algvorm.toLowerCase().compareTo(b.algvorm.toLowerCase()));
+    
+    return allWords;
+  }
 }
