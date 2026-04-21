@@ -169,4 +169,37 @@ class DatabaseService {
     
     return allWords;
   }
+
+  // ==========================================
+  // FLASHCARDS (JUHUSLIK VALIK)
+  // ==========================================
+
+  /// Leiab etteantud arvu juhuslikke sõnu valitud raskusastmete põhjal
+  Future<List<Word>> getFlashcardsBatch(String lang, Set<int> allowedDifficulties, int count) async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys().where((k) => k.startsWith('cache_${lang}_')).toList();
+
+    List<Word> validWords = [];
+
+    // Käime kõik lokaalsed failid läbi ja korjame välja ainult sobiva raskusastmega sõnad
+    for (String key in keys) {
+      String? cachedData = prefs.getString(key);
+      if (cachedData != null) {
+        Map<String, dynamic> wordsMap = jsonDecode(cachedData);
+        wordsMap.forEach((wordId, wordData) {
+          int difficulty = wordData['raskusaste'] ?? 0;
+          
+          if (allowedDifficulties.contains(difficulty)) {
+            validWords.add(Word.fromMap(wordId, wordData));
+          }
+        });
+      }
+    }
+
+    // Segame nimekirja suvalisse järjekorda
+    validWords.shuffle();
+
+    // Tagastame soovitud arvu sõnu (või kõik, mis leidsime, kui neid on vähem kui küsiti)
+    return validWords.take(count).toList();
+  }
 }
