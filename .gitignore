@@ -54,4 +54,5 @@ vanad_andmed.json
 vana_voti.json
 /eksport_env/
 /test/
+lib/firebase_options.dart
 
