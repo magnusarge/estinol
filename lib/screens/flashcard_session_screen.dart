@@ -69,8 +69,6 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
           children: [
             Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
             const SizedBox(height: 20),
-            
-            // Ringikujuline statistika
             Stack(
               alignment: Alignment.center,
               children: [
@@ -84,45 +82,56 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
                     valueColor: AlwaysStoppedAnimation<Color>(resultColor),
                   ),
                 ),
-                Text(
-                  '$percentInt%',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: resultColor),
-                ),
+                Text('$percentInt%', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: resultColor)),
               ],
             ),
-            
             const SizedBox(height: 25),
-            Text(
-              'Arvasid ära $_correctAnswers kaarti ${widget.words.length}-st.',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              textAlign: TextAlign.center,
-            ),
+            Text('Arvasid ära $_correctAnswers kaarti ${widget.words.length}-st.',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
             const SizedBox(height: 10),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey),
-            ),
+            Text(message, textAlign: TextAlign.center, style: const TextStyle(color: Colors.grey)),
           ],
         ),
-        actionsAlignment: MainAxisAlignment.center,
         actions: [
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, 
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                padding: const EdgeInsets.symmetric(vertical: 15),
+          Row(
+            children: [
+              // NUPP: PROOVI UUESTI
+              Expanded(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context); // Sulge dialoog
+                    setState(() { // Nulli seis
+                      _currentIndex = 0;
+                      _isFlipped = false;
+                      _correctAnswers = 0;
+                    });
+                  },
+                  child: const Text('Proovi uuesti'),
+                ),
               ),
-              onPressed: () {
-                Navigator.pop(context); // Sulge dialog
-                Navigator.pop(context); // Mine tagasi seadete lehele
-              },
-              child: const Text('Lõpeta sessioon', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            ),
-          )
+              const SizedBox(width: 10),
+              // NUPP: LÕPETA
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context); // Sulge dialoog
+                    Navigator.pop(context); // Tagasi seadetesse
+                  },
+                  child: const Text('Lõpeta'),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

@@ -76,38 +76,32 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Seadista õppesessioon',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 30),
+              // PEALKIRI EEMALDATUD
+              const SizedBox(height: 10),
 
-              // 1. RASKUSASTE (2 TULPA)
+              // 1. RASKUSASTE (SWITCHID 2 TULPA)
               const Text(
                 'Raskusaste',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey),
               ),
               const SizedBox(height: 10),
-              // Wrap paigutab elemendid ritta ja murrab need uuele reale, kui ruum otsa saab
               Wrap(
-                spacing: 10, 
+                spacing: 10,
                 runSpacing: 0,
                 children: _difficultyNames.entries.map((entry) {
                   int diffValue = entry.key;
                   String diffName = entry.value;
 
-                  // FractionallySizedBox tagab, et iga valik võtab ~poole ekraani laiusest
                   return FractionallySizedBox(
                     widthFactor: 0.48,
-                    child: CheckboxListTile(
+                    child: SwitchListTile( // CHECKBOX ASENDATUD SWITCHIGA
                       contentPadding: EdgeInsets.zero,
                       title: Text(diffName, style: const TextStyle(fontSize: 15)),
                       value: _selectedDifficulties.contains(diffValue),
-                      controlAffinity: ListTileControlAffinity.leading,
                       activeColor: Colors.blue,
-                      onChanged: (bool? checked) {
+                      onChanged: (bool value) {
                         setState(() {
-                          if (checked == true) {
+                          if (value) {
                             _selectedDifficulties.add(diffValue);
                           } else {
                             _selectedDifficulties.remove(diffValue);
