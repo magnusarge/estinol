@@ -23,14 +23,14 @@ Estiñol on minimalistlik sõnastik, mis on loodud spetsiaalselt hispaania keele
 - Android Studio / VS Code
 - Firebase projekt (koos Firestore andmebaasiga)
 
-### Käivitamine arendusrežiimis
-```bash
-flutter pub get
-flutter run
-
 ## Projekti struktuur
 - lib/models/ - Andmemudelid (nt Word)
 - lib/services/ - Andmebaasi loogika ja sünkroniseerimine
 - lib/screens/ - Rakenduse erinevad vaated (Kodu, Sõnastik, Kaardid)
 - lib/widgets/ - Korduvkasutatavad UI komponendid
 - assets/ - Rakenduse ikoonid ja staatilised failid
+
+### Käivitamine arendusrežiimis
+```bash
+flutter pub get
+flutter run
