@@ -14,8 +14,16 @@ class FlashcardSessionScreen extends StatefulWidget {
 class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
   int _currentIndex = 0;
   bool _isFlipped = false;
+  
+  // UUS: Hoiame meeles, mitu kaarti õigesti arvati
+  int _correctAnswers = 0; 
 
-  void _nextCard() {
+  // UUS: Ühine funktsioon mõlemale nupule, mis võtab vastu info, kas vastus oli õige
+  void _answerCard(bool knewIt) {
+    if (knewIt) {
+      _correctAnswers++;
+    }
+
     if (_currentIndex < widget.words.length - 1) {
       setState(() {
         _currentIndex++;
@@ -27,25 +35,93 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
   }
 
   void _showCompletionDialog() {
+    // Arvutame protsendi ja teeme selle täisarvuks (nt 85)
+    double percentage = _correctAnswers / widget.words.length;
+    int percentInt = (percentage * 100).round();
+    
+    String title;
+    String message;
+    Color resultColor;
+
+    // Loogikaplokk hinnangu andmiseks
+    if (percentage < 0.5) {
+      title = 'Hea algus!';
+      message = 'Samm-sammult läheb paremaks! Need sõnad vajavad veel veidi harjutamist.';
+      resultColor = Colors.orange;
+    } else if (percentage < 0.9) {
+      title = 'Tubli töö!';
+      message = 'Väga ilus tulemus! Suurem osa on juba selge.';
+      resultColor = Colors.blue;
+    } else {
+      title = 'Meisterlik! 🏆';
+      message = 'Suurepärane! Oled tõeline keelemeister!';
+      resultColor = Colors.green;
+    }
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Tubli töö! 🎉', textAlign: TextAlign.center),
-        content: const Text(
-          'Oled kõik valitud kaardid läbi vaadanud. Puhka natuke või alusta uut sessiooni!',
-          textAlign: TextAlign.center,
+        contentPadding: const EdgeInsets.all(24),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+            const SizedBox(height: 20),
+            
+            // Ringikujuline statistika
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: CircularProgressIndicator(
+                    value: percentage,
+                    strokeWidth: 8,
+                    backgroundColor: Colors.grey.shade200,
+                    valueColor: AlwaysStoppedAnimation<Color>(resultColor),
+                  ),
+                ),
+                Text(
+                  '$percentInt%',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: resultColor),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 25),
+            Text(
+              'Arvasid ära $_correctAnswers kaarti ${widget.words.length}-st.',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ],
         ),
         actionsAlignment: MainAxisAlignment.center,
         actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, foregroundColor: Colors.white),
-            onPressed: () {
-              Navigator.pop(context); // Sulge dialog
-              Navigator.pop(context); // Mine tagasi seadete lehele
-            },
-            child: const Text('Lõpeta'),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue, 
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                padding: const EdgeInsets.symmetric(vertical: 15),
+              ),
+              onPressed: () {
+                Navigator.pop(context); // Sulge dialog
+                Navigator.pop(context); // Mine tagasi seadete lehele
+              },
+              child: const Text('Lõpeta sessioon', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ),
           )
         ],
       ),
@@ -120,7 +196,7 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       ),
-                      onPressed: _isFlipped ? _nextCard : null, // Hiljem saame siia lisada negatiivse skoori loogika
+                      onPressed: _isFlipped ? () => _answerCard(false) : null, // Saada FALSE
                       icon: const Icon(Icons.close),
                       label: const Text('Ei teadnud', style: TextStyle(fontSize: 16)),
                     ),
@@ -131,7 +207,7 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       ),
-                      onPressed: _isFlipped ? _nextCard : null,
+                      onPressed: _isFlipped ? () => _answerCard(true) : null, // Saada TRUE
                       icon: const Icon(Icons.check),
                       label: const Text('Teadsin', style: TextStyle(fontSize: 16)),
                     ),
