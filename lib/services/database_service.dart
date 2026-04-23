@@ -259,4 +259,36 @@ class DatabaseService {
     return result;
   }
 
+  // ==========================================
+  // SEADETE SALVESTAMINE (PREFERENCES)
+  // ==========================================
+
+  /// Salvestab kaartide seaded
+  Future<void> saveFlashcardSettings(Set<int> difficulties, int count) async {
+    final prefs = await SharedPreferences.getInstance();
+    // Salvestame raskusastmed JSON listina
+    await prefs.setString('flashcard_difficulties', jsonEncode(difficulties.toList()));
+    await prefs.setInt('flashcard_count', count);
+  }
+
+  /// Laeb varem salvestatud seaded
+  Future<Map<String, dynamic>?> loadFlashcardSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? diffData = prefs.getString('flashcard_difficulties');
+    int? count = prefs.getInt('flashcard_count');
+    
+    if (diffData == null && count == null) return null;
+    
+    Set<int> difficulties = {0, 1, 2, 3}; // Vaikeväärtus
+    if (diffData != null) {
+      List<dynamic> list = jsonDecode(diffData);
+      difficulties = list.cast<int>().toSet();
+    }
+    
+    return {
+      'difficulties': difficulties,
+      'count': count ?? 15,
+    };
+  }
+
 }

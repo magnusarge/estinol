@@ -33,6 +33,7 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
   void initState() {
     super.initState();
     _loadCustomSets();
+    _loadSettings();
   }
 
   // Kui keelt vahetatakse, peame ka komplektid uuesti laadima!
@@ -42,6 +43,20 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
     if (oldWidget.activeLang != widget.activeLang) {
       _loadCustomSets();
     }
+  }
+
+  void _loadSettings() async {
+    final settings = await DatabaseService().loadFlashcardSettings();
+    if (settings != null) {
+      setState(() {
+        _selectedDifficulties = settings['difficulties'];
+        _selectedCount = settings['count'];
+      });
+    }
+  }
+
+  void _saveSettings() {
+    DatabaseService().saveFlashcardSettings(_selectedDifficulties, _selectedCount);
   }
 
   void _loadCustomSets() async {
@@ -151,6 +166,7 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
                             _selectedDifficulties.remove(diffValue);
                           }
                         });
+                        _saveSettings();
                       },
                     ),
                   );
@@ -179,6 +195,7 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
                     setState(() {
                       _selectedCount = newSelection.first;
                     });
+                    _saveSettings();
                   },
                 ),
               ),
