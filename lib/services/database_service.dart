@@ -202,4 +202,61 @@ class DatabaseService {
     // Tagastame soovitud arvu sõnu (või kõik, mis leidsime, kui neid on vähem kui küsiti)
     return validWords.take(count).toList();
   }
+
+
+// ==========================================
+  // OMA KOMPLEKTID (CUSTOM SETS - LOKAALNE)
+  // ==========================================
+
+  /// Loeb kõik kasutaja enda loodud komplektid valitud keeles
+  Future<List<Map<String, dynamic>>> getCustomSets(String lang) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? data = prefs.getString('custom_sets_$lang');
+    if (data == null) return [];
+    
+    List<dynamic> decoded = jsonDecode(data);
+    return decoded.cast<Map<String, dynamic>>();
+  }
+
+  /// Salvestab või uuendab komplekti
+  Future<void> saveCustomSet(String lang, String id, String name, List<String> wordIds) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<Map<String, dynamic>> sets = await getCustomSets(lang);
+    
+    int index = sets.indexWhere((s) => s['id'] == id);
+    final newSet = {'id': id, 'name': name, 'wordIds': wordIds};
+    
+    if (index >= 0) {
+      sets[index] = newSet; // Uuendame olemasolevat
+    } else {
+      sets.add(newSet); // Lisame uue
+    }
+    
+    await prefs.setString('custom_sets_$lang', jsonEncode(sets));
+  }
+
+  /// Kustutab komplekti
+  Future<void> deleteCustomSet(String lang, String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<Map<String, dynamic>> sets = await getCustomSets(lang);
+    sets.removeWhere((s) => s['id'] == id);
+    await prefs.setString('custom_sets_$lang', jsonEncode(sets));
+  }
+
+  /// Teeb ID-de nimekirja põhjal lokaalsest vahemälust valmis Word objektide nimekirja (mängu alustamiseks)
+  Future<List<Word>> getWordsByIds(String lang, List<dynamic> wordIds) async {
+    List<Word> allWords = await getAllCachedWords(lang);
+    List<Word> result = [];
+    
+    for (String id in wordIds) {
+      try {
+        // Otsime sõna üles ja säilitame kasutaja määratud järjekorra!
+        result.add(allWords.firstWhere((w) => w.id == id));
+      } catch (e) {
+        // Kui sõna on andmebaasist vahepeal kustutatud, ignoreerime seda vaikselt
+      }
+    }
+    return result;
+  }
+
 }
