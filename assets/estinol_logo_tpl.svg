@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="99.999992mm"
+   height="99.999992mm"
+   viewBox="0 0 99.999992 99.999992"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="estinol_logo_tpl.svg"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   inkscape:export-filename="estinol_logo.svg"
+   inkscape:export-xdpi="130.048"
+   inkscape:export-ydpi="130.048"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.72094934"
+     inkscape:cx="160.20543"
+     inkscape:cy="142.86718"
+     inkscape:window-width="2560"
+     inkscape:window-height="1321"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     style="stroke:none"
+     transform="matrix(1.0371787,0,0,1.0371787,90.901307,-119.96349)">
+    <rect
+       style="fill:#00aad4;stroke:none;stroke-width:3.58459;stroke-dasharray:none"
+       id="rect1"
+       width="96.415405"
+       height="96.415405"
+       x="1.792295"
+       y="1.792295"
+       ry="12.674326" />
+    <path
+       style="font-size:137.622px;font-family:Caladea;-inkscape-font-specification:'Caladea, Normal';letter-spacing:0px;fill:#ffffff;stroke:none;stroke-width:0.305804"
+       d="m 22.079255,83.421439 q 2.684887,-0.46694 4.319167,-1.05061 1.751014,-0.70041 3.385294,-1.98448 v -33.26926 q 0,-4.31917 -1.867749,-5.83672 -1.751013,-1.63428 -6.30365,-1.86774 l 0.350203,-3.3853 q 3.618762,-0.7004 10.389348,-2.801623 l 3.852231,-1.167343 2.101217,1.05061 1.050608,7.237526 q 2.684888,-3.85223 6.770587,-6.070183 4.202432,-2.217953 8.638334,-2.217953 8.521601,0 13.190971,4.319176 4.786105,4.20243 4.786105,11.79016 v 32.21865 q 1.05061,0.93387 3.38529,1.86775 2.33469,0.93387 4.78611,1.4008 l -0.46694,3.96897 H 54.764845 l 0.350203,-3.96897 q 4.435905,-0.7004 7.704459,-3.26855 v -31.16805 q 0,-11.55669 -10.039144,-11.55669 -3.968964,0 -7.587726,2.80163 -3.618762,2.68488 -5.48651,7.00404 v 32.91907 q 2.801622,2.21795 8.171398,3.26855 l -0.466937,3.96897 H 21.612317 Z M 36.78777,22.836359 q -1.867748,-0.466937 -3.735496,-2.217951 1.284077,-3.268559 4.319168,-6.186915 3.03509,-2.918357 7.354258,-2.918357 1.751014,0 3.268559,0.583672 1.63428,0.466937 3.85223,1.517545 3.735496,1.984483 6.186915,1.984483 2.217953,0 3.852234,-1.050609 1.751014,-1.167342 3.852226,-3.268559 1.984487,0.700405 3.852237,2.217951 -1.400819,3.268559 -4.552641,6.303649 -3.035089,3.035091 -6.887323,3.035091 -1.984481,0 -3.502026,-0.466937 -1.517545,-0.583672 -3.968965,-1.751014 -2.334684,-1.050609 -3.618761,-1.400811 -1.167343,-0.466937 -2.684888,-0.466937 -2.101217,0 -3.85223,1.050608 -1.751014,1.050608 -3.735497,3.035091 z"
+       id="text1"
+       aria-label="ñ" />
+  </g>
+  <rect
+     style="display:inline;fill:#0044aa;fill-opacity:1;stroke:none;stroke-width:0.308059;stroke-dasharray:0.308059, 1.23224;stroke-dashoffset:0"
+     id="rect2"
+     width="100"
+     height="100"
+     x="0"
+     y="0"
+     ry="15.658505"
+     inkscape:export-filename="estinol_logo.svg"
+     inkscape:export-xdpi="130.048"
+     inkscape:export-ydpi="130.048" />
+  <path
+     d="m 78.572874,87.778492 v -1.839653 c -6.009532,-0.613217 -7.481253,-2.08494 -7.481253,-8.094472 V 49.759004 c 0,-11.528491 -5.396314,-18.396525 -14.471934,-18.396525 -5.641602,0 -9.443549,2.084938 -17.783309,9.934123 V 31.607766 L 37.977873,31.362479 C 31.968341,33.570061 27.798462,34.91914 21.05307,36.881436 v 2.084939 c 0.735861,-0.36793 1.962295,-0.490574 3.311373,-0.490574 3.434019,0 4.53781,1.839653 4.53781,7.849186 v 30.415589 c 0,6.99068 -1.349077,8.707689 -7.603896,9.198263 v 1.839653 H 47.298781 V 85.938839 C 41.043962,85.448265 39.204308,83.976543 39.204308,79.561378 V 45.098552 c 5.886889,-5.518959 8.585047,-6.990682 12.632282,-6.990682 6.009532,0 8.952976,3.80195 8.952976,11.896421 v 25.632494 c 0,7.72654 -1.594365,9.81148 -7.72654,10.302054 v 1.839653 z M 70.233117,8.9187162 h -3.556663 c -2.084939,4.6604538 -3.679305,6.1321758 -6.500104,6.1321758 -1.839654,0 -4.169881,-0.735861 -6.500106,-1.839653 L 50.732798,11.739517 C 47.911999,10.267794 44.84591,9.5319337 42.147754,9.5319337 c -6.132177,0 -10.547343,4.4151663 -12.386996,12.3869933 h 3.556663 c 1.349077,-3.801947 3.434017,-5.641601 6.254819,-5.641601 1.471722,0 3.188731,0.490574 5.028383,1.349079 l 2.820802,1.349079 c 5.028382,2.452869 6.868036,2.943443 9.934123,2.943443 6.745393,0 10.302055,-3.679304 12.877569,-13.0002108 z"
+     id="text2"
+     style="font-size:119.219px;font-family:'TeX Gyre Termes';-inkscape-font-specification:'TeX Gyre Termes, Normal';letter-spacing:0px;fill:#ffffff;stroke-width:3.55077"
+     aria-label="ñ" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:119.219px;font-family:'TeX Gyre Termes';-inkscape-font-specification:'TeX Gyre Termes, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:1;stroke:none;stroke-width:3.45163"
+     x="-15.401342"
+     y="-34.202637"
+     id="text2-5"><tspan
+       sodipodi:role="line"
+       id="tspan1-3"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:119.219px;font-family:'TeX Gyre Termes';-inkscape-font-specification:'TeX Gyre Termes, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke-width:3.45163"
+       x="-15.401342"
+       y="-34.202637">ñ</tspan></text>
+  <ellipse
+     style="display:none;fill:none;stroke:#000000;stroke-width:0.957735;stroke-dasharray:0.957735, 1.91547;stroke-dashoffset:0;stroke-opacity:1"
+     id="path1"
+     cx="50.000027"
+     cy="50.000023"
+     rx="41.947292"
+     ry="41.947491"
+     sodipodi:insensitive="true" />
+</svg>

@@ -6,7 +6,6 @@ import 'theme.dart';
 import 'screens/home_screen.dart';
 import 'screens/dictionary_screen.dart';
 import 'screens/flashcards_screen.dart';
-import 'screens/settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -86,7 +85,6 @@ class _MainScreenState extends State<MainScreen> {
           HomeScreen(activeLang: _activeLang),
           DictionaryScreen(activeLang: _activeLang),
           FlashcardsScreen(activeLang: _activeLang),
-          const SettingsScreen(),
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -103,7 +101,6 @@ class _MainScreenState extends State<MainScreen> {
           ),
           NavigationDestination(icon: Icon(Icons.menu_book_outlined), selectedIcon: Icon(Icons.menu_book), label: 'Sõnastik'),
           NavigationDestination(icon: Icon(Icons.style_outlined), selectedIcon: Icon(Icons.style), label: 'Kaardid'),
-          NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: 'Seaded'),
         ],
       ),
     );
