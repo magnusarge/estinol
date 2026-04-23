@@ -269,6 +269,7 @@ class DatabaseService {
     // Salvestame raskusastmed JSON listina
     await prefs.setString('flashcard_difficulties', jsonEncode(difficulties.toList()));
     await prefs.setInt('flashcard_count', count);
+    print('💾 Seaded salvestatud: Raskusastmed: $difficulties, Arv: $count');
   }
 
   /// Laeb varem salvestatud seaded
@@ -277,7 +278,10 @@ class DatabaseService {
     String? diffData = prefs.getString('flashcard_difficulties');
     int? count = prefs.getInt('flashcard_count');
     
-    if (diffData == null && count == null) return null;
+    if (diffData == null && count == null) {
+      print('ℹ️ Salvestatud seadeid ei leitud, kasutan vaikeväärtusi.');
+      return null;
+    }
     
     Set<int> difficulties = {0, 1, 2, 3}; // Vaikeväärtus
     if (diffData != null) {
@@ -285,6 +289,7 @@ class DatabaseService {
       difficulties = list.cast<int>().toSet();
     }
     
+    print('📂 Seaded laetud: Raskusastmed: $difficulties, Arv: $count');
     return {
       'difficulties': difficulties,
       'count': count ?? 15,
