@@ -12,22 +12,38 @@ class FlashcardSessionScreen extends StatefulWidget {
 }
 
 class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
+  // UUS: Hoiame sessiooni sõnu eraldi nimekirjas, et saaksime neid segada
+  late List<Word> _sessionWords; 
+  
   int _currentIndex = 0;
   bool _isFlipped = false;
-  
-  // UUS: Hoiame meeles, mitu kaarti õigesti arvati
-  int _correctAnswers = 0; 
+  int _correctAnswers = 0;
 
-  // UUS: Ühine funktsioon mõlemale nupule, mis võtab vastu info, kas vastus oli õige
+  @override
+  void initState() {
+    super.initState();
+    _startNewSession(); // Käivitame sessiooni koos segamisega kohe alguses
+  }
+
+  // UUS: Funktsioon, mis nullib seisu ja segab kaardid uuesti
+  void _startNewSession() {
+    // Teeme algsest nimekirjast uue koopia ja segame selle suvalisse järjekorda
+    _sessionWords = List.from(widget.words)..shuffle();
+    _currentIndex = 0;
+    _isFlipped = false;
+    _correctAnswers = 0;
+  }
+
   void _answerCard(bool knewIt) {
     if (knewIt) {
       _correctAnswers++;
     }
 
-    if (_currentIndex < widget.words.length - 1) {
+    // Kasutame nüüd kõikjal _sessionWords nimekirja
+    if (_currentIndex < _sessionWords.length - 1) {
       setState(() {
         _currentIndex++;
-        _isFlipped = false; // Uus kaart on alati peidetud vastusega
+        _isFlipped = false; 
       });
     } else {
       _showCompletionDialog();
@@ -35,15 +51,13 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
   }
 
   void _showCompletionDialog() {
-    // Arvutame protsendi ja teeme selle täisarvuks (nt 85)
-    double percentage = _correctAnswers / widget.words.length;
+    double percentage = _correctAnswers / _sessionWords.length;
     int percentInt = (percentage * 100).round();
     
     String title;
     String message;
     Color resultColor;
 
-    // Loogikaplokk hinnangu andmiseks
     if (percentage < 0.5) {
       title = 'Hea algus!';
       message = 'Samm-sammult läheb paremaks! Need sõnad vajavad veel veidi harjutamist.';
@@ -86,7 +100,7 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
               ],
             ),
             const SizedBox(height: 25),
-            Text('Arvasid ära $_correctAnswers kaarti ${widget.words.length}-st.',
+            Text('Arvasid ära $_correctAnswers kaarti ${_sessionWords.length}-st.',
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
             const SizedBox(height: 10),
             Text(message, textAlign: TextAlign.center, style: const TextStyle(color: Colors.grey)),
@@ -95,7 +109,6 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
         actions: [
           Row(
             children: [
-              // NUPP: PROOVI UUESTI
               Expanded(
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
@@ -103,18 +116,15 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 15),
                   ),
                   onPressed: () {
-                    Navigator.pop(context); // Sulge dialoog
-                    setState(() { // Nulli seis
-                      _currentIndex = 0;
-                      _isFlipped = false;
-                      _correctAnswers = 0;
+                    Navigator.pop(context); 
+                    setState(() {
+                      _startNewSession(); // KUTSUME VÄLJA UUE SEGAMISE JA NULLIMISE!
                     });
                   },
                   child: const Text('Proovi uuesti'),
                 ),
               ),
               const SizedBox(width: 10),
-              // NUPP: LÕPETA
               Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -124,8 +134,8 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 15),
                   ),
                   onPressed: () {
-                    Navigator.pop(context); // Sulge dialoog
-                    Navigator.pop(context); // Tagasi seadetesse
+                    Navigator.pop(context); 
+                    Navigator.pop(context); 
                   },
                   child: const Text('Lõpeta'),
                 ),
@@ -139,11 +149,12 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final word = widget.words[_currentIndex];
+    // Siin kasutame ka nüüd segatud nimekirja
+    final word = _sessionWords[_currentIndex];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kaart ${_currentIndex + 1} / ${widget.words.length}'),
+        title: Text('Kaart ${_currentIndex + 1} / ${_sessionWords.length}'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -152,11 +163,10 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              // PROGRESSIRIBA
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: LinearProgressIndicator(
-                  value: (_currentIndex + 1) / widget.words.length,
+                  value: (_currentIndex + 1) / _sessionWords.length,
                   minHeight: 8,
                   backgroundColor: Colors.grey.shade200,
                   valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
@@ -164,7 +174,6 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
               ),
               const SizedBox(height: 40),
 
-              // KAART ISE (Interaktiivne ala)
               Expanded(
                 child: GestureDetector(
                   onTap: () {
@@ -172,16 +181,12 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
                       setState(() => _isFlipped = true);
                     }
                   },
-                  // Animatsioon kaardi pööramiseks
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
                     transitionBuilder: (Widget child, Animation<double> animation) {
                       return FadeTransition(
                         opacity: animation,
-                        child: ScaleTransition(
-                          scale: animation,
-                          child: child,
-                        ),
+                        child: ScaleTransition(scale: animation, child: child),
                       );
                     },
                     child: _isFlipped ? _buildBackSide(word) : _buildFrontSide(word),
@@ -191,7 +196,6 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
 
               const SizedBox(height: 40),
 
-              // NUPUD (Nähtavad ainult siis, kui kaart on pööratud)
               AnimatedOpacity(
                 opacity: _isFlipped ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 300),
@@ -205,7 +209,7 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       ),
-                      onPressed: _isFlipped ? () => _answerCard(false) : null, // Saada FALSE
+                      onPressed: _isFlipped ? () => _answerCard(false) : null,
                       icon: const Icon(Icons.close),
                       label: const Text('Ei teadnud', style: TextStyle(fontSize: 16)),
                     ),
@@ -216,7 +220,7 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       ),
-                      onPressed: _isFlipped ? () => _answerCard(true) : null, // Saada TRUE
+                      onPressed: _isFlipped ? () => _answerCard(true) : null,
                       icon: const Icon(Icons.check),
                       label: const Text('Teadsin', style: TextStyle(fontSize: 16)),
                     ),
@@ -231,17 +235,14 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
     );
   }
 
-  // KAARDI ESIMENE POOL (Ainult sõna)
   Widget _buildFrontSide(Word word) {
     return Container(
-      key: const ValueKey(1), // ValueKey on AnimatedSwitcherile vajalik!
+      key: const ValueKey(1), 
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 10, spreadRadius: 5),
-        ],
+        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 10, spreadRadius: 5)],
         border: Border.all(color: Colors.grey.shade200),
       ),
       child: Center(
@@ -254,28 +255,22 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
               style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Vajuta kaardile',
-              style: TextStyle(color: Colors.grey, fontSize: 16),
-            )
+            const Text('Vajuta kaardile', style: TextStyle(color: Colors.grey, fontSize: 16))
           ],
         ),
       ),
     );
   }
 
-  // KAARDI TAGUMINE POOL (Sisu ja Markdown)
   Widget _buildBackSide(Word word) {
     return Container(
       key: const ValueKey(2),
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50, // Õrn toon tagaküljel aitab visuaalselt eristada
+        color: Colors.blue.shade50, 
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 10, spreadRadius: 5),
-        ],
+        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 10, spreadRadius: 5)],
         border: Border.all(color: Colors.blue.shade100),
       ),
       child: Column(
@@ -290,9 +285,7 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
             child: SingleChildScrollView(
               child: MarkdownBody(
                 data: word.sisuMd.isEmpty ? "Sisu puudub." : word.sisuMd,
-                styleSheet: MarkdownStyleSheet(
-                  p: const TextStyle(fontSize: 18, height: 1.5),
-                ),
+                styleSheet: MarkdownStyleSheet(p: const TextStyle(fontSize: 18, height: 1.5)),
               ),
             ),
           ),
