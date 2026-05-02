@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:flutter_html/flutter_html.dart';
 import '../models/word.dart';
 
 class WordCard extends StatelessWidget {
@@ -73,13 +73,12 @@ class WordCard extends StatelessWidget {
           ),
           const Divider(),
           const SizedBox(height: 10),
-          // Markdown tehakse valitavaks
-          MarkdownBody(
+          // HTML sisu kuvamine
+          Html(
             data: word.sisuMd.isEmpty ? "Sisu puudub." : word.sisuMd,
-            selectable: true, 
-            styleSheet: MarkdownStyleSheet(
-              p: const TextStyle(fontSize: 16, height: 1.5),
-            ),
+            style: {
+              "body": Style(fontSize: FontSize(16), lineHeight: LineHeight(1.5)),
+            },
           ),
         ],
       ),

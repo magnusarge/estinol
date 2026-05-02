@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Vajalik kopeerimiseks
-import 'package:flutter_markdown_plus/flutter_markdown_plus.dart'; // Sinu pubspec-is olemasolev pakett
+import 'package:flutter_html/flutter_html.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../models/word.dart';
 import '../services/database_service.dart';
@@ -137,13 +137,12 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
-              // MARKDOWN KUVAJA JA VALITAV TEKST
-              child: MarkdownBody(
+              // HTML KUVAJA
+              child: Html(
                 data: word.sisuMd.isEmpty ? "Sisu puudub." : word.sisuMd,
-                selectable: true, // Teeb sisu kopeeritavaks
-                styleSheet: MarkdownStyleSheet(
-                  p: const TextStyle(fontSize: 17, height: 1.5),
-                ),
+                style: {
+                  "body": Style(fontSize: FontSize(17), lineHeight: LineHeight(1.5)),
+                },
               ),
             ),
           ),

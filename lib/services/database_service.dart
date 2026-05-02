@@ -59,7 +59,7 @@ class DatabaseService {
           String letter = key.split('_')[1]; 
           
           int remoteTime = remoteTimestamps[key] ?? 0;
-          int localTime = prefs.getInt('sync_time_${lang}_$letter') ?? 0;
+          int localTime = prefs.getInt('sync_time_v2_${lang}_$letter') ?? 0;
 
           if (remoteTime > localTime) {
             await _downloadAndCacheLetter(lang, letter, remoteTime, prefs);
@@ -79,10 +79,10 @@ class DatabaseService {
     if (doc.exists && doc.data() != null) {
       // Salvestame dokumendi sisu (JSON) otse telefoni mällu
       String jsonString = jsonEncode(doc.data());
-      await prefs.setString('cache_${lang}_$letter', jsonString);
+      await prefs.setString('cache_v2_${lang}_$letter', jsonString);
       
       // Uuendame lokaalset ajatemplit, et me seda homme uuesti ei tõmbaks
-      await prefs.setInt('sync_time_${lang}_$letter', newTime);
+      await prefs.setInt('sync_time_v2_${lang}_$letter', newTime);
       print("✅ Uuendatud lokaalne vahemälu: $lang -> $letter");
     }
   }
@@ -96,7 +96,7 @@ class DatabaseService {
     String firstLetter = normalizedQuery[0];
     
     final prefs = await SharedPreferences.getInstance();
-    String? cachedData = prefs.getString('cache_${lang}_$firstLetter');
+    String? cachedData = prefs.getString('cache_v2_${lang}_$firstLetter');
 
     if (cachedData == null) {
       return []; // Seda tähte pole veel vahemälus
@@ -125,7 +125,7 @@ class DatabaseService {
     final prefs = await SharedPreferences.getInstance();
     
     // Leiame kõik võtmed, mis on seotud selle keele vahemäluga
-    final keys = prefs.getKeys().where((k) => k.startsWith('cache_${lang}_')).toList();
+    final keys = prefs.getKeys().where((k) => k.startsWith('cache_v2_${lang}_')).toList();
     
     if (keys.isEmpty) return null; // Andmebaas on veel tühi
 
@@ -150,7 +150,7 @@ class DatabaseService {
     final prefs = await SharedPreferences.getInstance();
     
     // Leiame kõik antud keele failid
-    final keys = prefs.getKeys().where((k) => k.startsWith('cache_${lang}_')).toList();
+    final keys = prefs.getKeys().where((k) => k.startsWith('cache_v2_${lang}_')).toList();
     
     List<Word> allWords = [];
 
@@ -177,7 +177,7 @@ class DatabaseService {
   /// Leiab etteantud arvu juhuslikke sõnu valitud raskusastmete põhjal
   Future<List<Word>> getFlashcardsBatch(String lang, Set<int> allowedDifficulties, int count) async {
     final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys().where((k) => k.startsWith('cache_${lang}_')).toList();
+    final keys = prefs.getKeys().where((k) => k.startsWith('cache_v2_${lang}_')).toList();
 
     List<Word> validWords = [];
 

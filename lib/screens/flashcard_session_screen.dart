@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:flutter_html/flutter_html.dart';
 import '../models/word.dart';
 
 class FlashcardSessionScreen extends StatefulWidget {
@@ -283,9 +283,11 @@ class _FlashcardSessionScreenState extends State<FlashcardSessionScreen> {
           const Divider(height: 30),
           Expanded(
             child: SingleChildScrollView(
-              child: MarkdownBody(
+              child: Html(
                 data: word.sisuMd.isEmpty ? "Sisu puudub." : word.sisuMd,
-                styleSheet: MarkdownStyleSheet(p: const TextStyle(fontSize: 18, height: 1.5)),
+                style: {
+                  "body": Style(fontSize: FontSize(18), lineHeight: LineHeight(1.5)),
+                },
               ),
             ),
           ),
